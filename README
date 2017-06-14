@@ -1,0 +1,7 @@
+Point the Makefile to your freedom-e-sdk,
+and make and hopefully make program. Good luck.
+
+Note that I'm using "pin 8" as the CS instead of pin 10,
+but you can change that in spihw.c if you like.
+
+
