@@ -2,6 +2,8 @@
 
 void init_uart(void);
 
+void uart_isr(void);
+
 uint8_t uart_recv(void);
 void uart_send(uint8_t val);
 
