@@ -18,6 +18,7 @@
 #include "traps.h"
 #include "frser.h"
 #include "delay.h"
+#include "leds.h"
 
 #include "uart.h"
 
@@ -66,7 +67,13 @@ void main(void) {
 	init_pll();
 	init_traps();
 	init_uart();
-//	uart_send('H');
-	frser_main();
-	for(;;);
+	init_leds();
+	frser_init();
+	for(;;) {
+		uint8_t op;
+		clear_led(LED_BLUE);
+		op = RECEIVE();
+		set_led(LED_BLUE);
+		frser_operation(op);
+	}
 }

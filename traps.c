@@ -18,9 +18,18 @@
 #include "traps.h"
 #include "uart.h"
 
+#include "leds.h"
+
 /* These are provided by the BSP. */
 #include "platform.h"
 #include "encoding.h"
+
+static void panic(uint32_t info) {
+	set_led(LED_RED);
+	/* Require the compiler to keep info in a register here. */
+	asm volatile ("" :: "r" (info) );
+	for(;;);
+}
 
 static void machine_interrupt(void) {
 	volatile uint32_t* claim = (uint32_t*)(PLIC_CTRL_ADDR + PLIC_CLAIM_OFFSET);
@@ -32,8 +41,7 @@ static void machine_interrupt(void) {
 			uart_isr();
 			break;
 		default: /* Whoops */
-			//uart_send(0x15);
-			for(;;);
+			panic(id|0x1000);
 	}
 	*claim = id; /* complete id */
 }
@@ -44,16 +52,12 @@ static void handle_interrupt(uint32_t code) {
 			machine_interrupt();
 			break;
 		default:
-			/* TODO: Uhh... */
-			//uart_send(0x15);
-			for(;;);
+			panic(code);
 	}
 }
 
 static void handle_exception(uint32_t code) {
-	/* TODO: Do more than just blind-send a NAK. */
-	//uart_send(0x15);
-	for(;;);
+	panic(code | 0x2000);
 }
 
 void handle_trap(uint32_t mcause) {

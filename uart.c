@@ -16,6 +16,7 @@
 
 #include "main.h"
 #include "uart.h"
+#include "leds.h"
 
 #include "platform.h"
 
@@ -55,7 +56,8 @@ void uart_isr(void) {
 
 uint8_t uart_recv(void) {
 	uint32_t ro = uart_bufro;
-	while (uart_bufwo == ro) ;
+	while (uart_bufwo == ro) set_led(LED_GREEN);
+	clear_led(LED_GREEN);
 	uint8_t c = uart_rxbuf[ro++];
 	if (ro >= UART_BUFLEN) ro = 0;
 	uart_bufro = ro;

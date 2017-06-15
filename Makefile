@@ -27,8 +27,8 @@ CFLAGS += $(OPTIONS)
 
 LDFLAGS = -Tlink.lds
 
-DEPS = main.h uart.h spihw.h delay.h
-SOURCES = start.S entry.S traps.c main.c uart.c spihw.c delay.c flash.c
+DEPS = main.h uart.h spihw.h delay.h leds.h
+SOURCES = start.S entry.S traps.c main.c uart.c spihw.c delay.c flash.c leds.c
 
 include libfrser/Makefile.frser
 include libfrser/Makefile.spilib
