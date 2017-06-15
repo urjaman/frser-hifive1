@@ -9,20 +9,6 @@ _start:
 .option pop
 	la sp, _sp
 
-#if 0
-	/* Load the ITIM/non-flash text  */
-	la a0, _text_lma
-	la a1, _text
-	la a2, _etext
-	/* There will be .text, no need to test for that. */
-0:
-	lw t0, (a0)
-	sw t0, (a1)
-	addi a0, a0, 4
-	addi a1, a1, 4
-	bltu a1, a2, 0b
-#endif
-
 	/* load data */
 	la a0, _data_lma
 	la a1, _data

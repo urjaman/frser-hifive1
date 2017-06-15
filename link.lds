@@ -5,14 +5,12 @@ ENTRY( _start )
 MEMORY
 {
   flash (rxai!w) : ORIGIN = 0x20400000, LENGTH = 512M
-/*  itim (rxaiw) : ORIGIN = 0x08000000, LENGTH = 8K */
   ram (wxa!ri) : ORIGIN = 0x80000000, LENGTH = 16K
 }
 
 PHDRS
 {
   flash PT_LOAD;
-/*  itim PT_LOAD; */
   ram_init PT_LOAD;
   ram PT_NULL;
 }
@@ -26,11 +24,29 @@ SECTIONS
     KEEP (*(SORT_NONE(.init)))
   } >flash AT>flash :flash
 
+  .text           :
+  {
+    *(.text.unlikely .text.unlikely.*)
+    *(.text.startup .text.startup.*)
+    *(.text .text.*)
+    *(.gnu.linkonce.t.*)
+  } >flash AT>flash :flash
+
   .fini           :
   {
     KEEP (*(SORT_NONE(.fini)))
   } >flash AT>flash :flash
 
+  PROVIDE (__etext = .);
+  PROVIDE (_etext = .);
+  PROVIDE (etext = .);
+
+  .rodata         :
+  {
+    *(.rdata)
+    *(.rodata .rodata.*)
+    *(.gnu.linkonce.r.*)
+  } >flash AT>flash :flash
 
   . = ALIGN(4);
 
@@ -88,40 +104,20 @@ SECTIONS
     KEEP (*(.dtors))
   } >flash AT>flash :flash
 
-  .tlalign         :
-  {
-    . = ALIGN(4);
-    PROVIDE( _text_lma = . );
-  } >flash AT>flash :flash
-
-  .text           :
-  {
-    . = ALIGN(4);
-    PROVIDE( _text = . );
-
-    *(.text.unlikely .text.unlikely.*)
-    *(.text.startup .text.startup.*)
-    *(.text .text.*)
-    *(.gnu.linkonce.t.*)
-  } >flash AT>flash :flash
-
-  PROVIDE (__etext = .);
-  PROVIDE (_etext = .);
-  PROVIDE (etext = .);
-
   .lalign         :
   {
     . = ALIGN(4);
     PROVIDE( _data_lma = . );
   } >flash AT>flash :flash
 
-  .data          :
+  .dalign         :
   {
     . = ALIGN(4);
     PROVIDE( _data = . );
-    *(.rdata)
-    *(.rodata .rodata.*)
-    *(.gnu.linkonce.r.*)
+  } >ram AT>flash :ram_init
+
+  .data          :
+  {
     *(.data .data.*)
     *(.gnu.linkonce.d.*)
     . = ALIGN(8);

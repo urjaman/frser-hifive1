@@ -1,8 +1,24 @@
+/*	Copyright (C) 2017 Urja Rannikko <urjaman@gmail.com>
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "main.h"
 #include "traps.h"
 #include "uart.h"
 
-/* Thse are provided by the BSP. */
+/* These are provided by the BSP. */
 #include "platform.h"
 #include "encoding.h"
 
@@ -66,10 +82,11 @@ void init_traps(void) {
 	/* Set the vector. */
 	write_csr(mtvec, &trap_entry);
 
-	/* Enable Machine Interrupts. */
+	/* Disable timer interrupts... */
 	clear_csr(mie, MIP_MTIP);
+	/* Enable Machine Interrupts. */
 	set_csr(mie, MIP_MEIP);
 
-	/* Enable Interrupts in general. */
+	/* Enable Interrupts */
 	set_csr(mstatus, MSTATUS_MIE);
 }

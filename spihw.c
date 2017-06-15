@@ -1,3 +1,19 @@
+/*	Copyright (C) 2017 Urja Rannikko <urjaman@gmail.com>
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "main.h"
 #include "spilib.h"
 #include "frser-cfg.h"
@@ -43,12 +59,10 @@ uint8_t spi_txrx(const uint8_t c) {
 
 void spi_init(void) {
 	GPIO_REG(GPIO_OUTPUT_VAL) |= SPI_CS;
-	GPIO_REG(GPIO_OUTPUT_VAL) &= ~(SPI_SCK|SPI_MOSI);
 	GPIO_REG(GPIO_OUTPUT_EN) |= SPI_CS;
-	GPIO_REG(GPIO_INPUT_EN) |= SPI_MISO;
 
+	/* Oh wow, reset defaults are basically fine for us. */
 	SPI1_REG(SPI_REG_SCKDIV) = spi_div;
-	SPI1_REG(SPI_REG_CSMODE) = SPI_CSMODE_AUTO;
 
 	GPIO_REG(GPIO_IOF_SEL) &= ~SPI_HW_PINS;
 	GPIO_REG(GPIO_IOF_EN) |= SPI_HW_PINS;
@@ -59,7 +73,7 @@ void spi_init(void) {
 uint8_t spi_uninit(void) {
 	if (spi_initialized) {
 		GPIO_REG(GPIO_IOF_EN) &= ~SPI_HW_PINS;
-		GPIO_REG(GPIO_OUTPUT_EN) &= ~(SPI_CS|SPI_SCK|SPI_MOSI);
+		GPIO_REG(GPIO_OUTPUT_EN) &= ~SPI_CS;
 		spi_initialized = 0;
 		return 1;
 	}
