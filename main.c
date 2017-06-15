@@ -38,8 +38,8 @@ static void init_pll(void) {
 	while ((PRCI_REG(PRCI_HFROSCCFG) & ROSC_RDY(1)) == 0) ;
 	PRCI_REG(PRCI_PLLCFG) &= ~PLL_SEL(1);
 
-	/* Slow down the QSPI. Not that we need it. */
-	SPI0_REG(SPI_REG_SCKDIV) = 8;
+	/* Slow down the QSPI. */
+	SPI0_REG(SPI_REG_SCKDIV) = 7;
 
 	/* Final output divide to divide-by-1: */
 	PRCI_REG(PRCI_PLLDIV) = (PLL_FINAL_DIV_BY_1(1) | PLL_FINAL_DIV(0));
@@ -66,7 +66,7 @@ void main(void) {
 	init_pll();
 	init_traps();
 	init_uart();
-	uart_send('H');
+//	uart_send('H');
 	frser_main();
 	for(;;);
 }
